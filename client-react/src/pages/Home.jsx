@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FiTrash2 } from "react-icons/fi";
-import Modal from '../components/Model';
+import Modal from '../components/Modal';
 import CreateWorkout from '../components/CreateWorkout';
 
 export default function Home() {
@@ -21,6 +21,18 @@ export default function Home() {
     fetchWorkouts()
   }, [])
 
+  const deleteWorkout = async (id) => {
+    const response = await fetch(`/api/workouts/${id}`, {
+      method: 'DELETE',
+    })
+
+    const json = await response.json()
+
+    if (response.ok) {
+      console.log(json)
+    }
+  }
+
 
   return (
     <>
@@ -32,13 +44,17 @@ export default function Home() {
               <div className="flex flex-col gap-[10px]">
                 <h1 className="text-[14px] font-black text-green-600">{workout.title}</h1>
                 <div className="flex flex-col gap-[4px]">
-                  <p className="text-[12px] font-semibold">{workout.load}(kg): 0</p>
+                  <p className="text-[12px] font-semibold">(kg): {workout.load}</p>
                   <p className="text-[12px] font-semibold">Number of Reps: {workout.reps}</p>
                   <p className="text-[12px]">3 Minutes ago</p>
                 </div>
               </div>
               <div className="">
-                <button className="p-[10px] rounded-[5px] hover:bg-gray-100 duration-[200]">
+                <button className="p-[10px] rounded-[5px] hover:bg-gray-100 duration-[200]"
+                onClick={()=> {
+                  deleteWorkout(workout._id)
+                }}
+                >
                   <FiTrash2 />
                 </button>
               </div>
@@ -60,9 +76,8 @@ export default function Home() {
 
       <Modal open={open} setOpen={setOpen}>
         <div className="p-[20px]">
-          <CreateWorkout />
+          <CreateWorkout setOpen={setOpen}/>
         </div>
-
       </Modal>
 
 
